@@ -21,6 +21,12 @@ Requires **iOS 17+** or **macOS 14+**.
 
 ---
 
+## 🌄 Example
+
+<p align="center">
+    <img src="https://github.com/stevenation/PaletteKit/blob/main/Assets/example.gif" style="display: block; margin: auto;"/>
+</p>
+
 ## Quick start
 
 ```swift
