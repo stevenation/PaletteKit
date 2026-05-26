@@ -47,7 +47,7 @@ struct PaletteModifier: ViewModifier {
     let image: CGImage?
 
     @State private var palette: ImagePalette = .placeholder
-    private let extractor = PaletteExtractor()
+    @State private var extractor = PaletteExtractor()
 
     func body(content: Content) -> some View {
         content
@@ -70,7 +70,7 @@ struct URLPaletteModifier: ViewModifier {
     let url: URL?
 
     @State private var palette: ImagePalette = .placeholder
-    private let extractor = PaletteExtractor()
+    @State private var extractor = PaletteExtractor()
 
     func body(content: Content) -> some View {
         content

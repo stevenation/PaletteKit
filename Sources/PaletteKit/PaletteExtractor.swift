@@ -38,10 +38,14 @@ actor PaletteExtractor {
 
         var colorRange: Int {
             guard !pixels.isEmpty else { return 0 }
-            let rRange = Int(pixels.max { $0.r < $1.r }!.r) - Int(pixels.min { $0.r < $1.r }!.r)
-            let gRange = Int(pixels.max { $0.g < $1.g }!.g) - Int(pixels.min { $0.g < $1.g }!.g)
-            let bRange = Int(pixels.max { $0.b < $1.b }!.b) - Int(pixels.min { $0.b < $1.b }!.b)
-            return max(rRange, max(gRange, bRange))
+            let (rLo, rHi, gLo, gHi, bLo, bHi) = pixels.reduce(
+                (UInt8(255), UInt8(0), UInt8(255), UInt8(0), UInt8(255), UInt8(0))
+            ) { acc, p in
+                (min(acc.0, p.r), max(acc.1, p.r),
+                 min(acc.2, p.g), max(acc.3, p.g),
+                 min(acc.4, p.b), max(acc.5, p.b))
+            }
+            return max(Int(rHi) - Int(rLo), max(Int(gHi) - Int(gLo), Int(bHi) - Int(bLo)))
         }
     }
 
@@ -109,9 +113,16 @@ actor PaletteExtractor {
         let px = bucket.pixels
         guard px.count > 1 else { return (bucket, Bucket(pixels: [])) }
 
-        let rRange = Int(px.max { $0.r < $1.r }!.r) - Int(px.min { $0.r < $1.r }!.r)
-        let gRange = Int(px.max { $0.g < $1.g }!.g) - Int(px.min { $0.g < $1.g }!.g)
-        let bRange = Int(px.max { $0.b < $1.b }!.b) - Int(px.min { $0.b < $1.b }!.b)
+        let (rLo, rHi, gLo, gHi, bLo, bHi) = px.reduce(
+            (UInt8(255), UInt8(0), UInt8(255), UInt8(0), UInt8(255), UInt8(0))
+        ) { acc, p in
+            (min(acc.0, p.r), max(acc.1, p.r),
+             min(acc.2, p.g), max(acc.3, p.g),
+             min(acc.4, p.b), max(acc.5, p.b))
+        }
+        let rRange = Int(rHi) - Int(rLo)
+        let gRange = Int(gHi) - Int(gLo)
+        let bRange = Int(bHi) - Int(bLo)
 
         let sorted: [Pixel]
         if rRange >= gRange && rRange >= bRange {
@@ -133,22 +144,22 @@ actor PaletteExtractor {
 
         let reps = buckets.map { (rgb: $0.representative, count: $0.pixels.count) }
 
-        let dominant = reps.max { $0.count < $1.count }!.rgb
-
-        let vibrantCandidates = reps.filter {
-            let hsl = hsl($0.rgb); return hsl.l >= 0.25 && hsl.l <= 0.85
+        guard let dominant = reps.max(by: { $0.count < $1.count })?.rgb else {
+            return .placeholder
         }
-        let vibrant = (vibrantCandidates.isEmpty ? reps : vibrantCandidates)
-            .max { hsl($0.rgb).s < hsl($1.rgb).s }!.rgb
 
-        let mutedCandidates = reps.filter {
-            let hsl = hsl($0.rgb); return hsl.l >= 0.2 && hsl.l <= 0.8
+        let vibrantSource = reps.filter { let h = hsl($0.rgb); return h.l >= 0.25 && h.l <= 0.85 }
+        guard let vibrant = (vibrantSource.isEmpty ? reps : vibrantSource)
+            .max(by: { hsl($0.rgb).s < hsl($1.rgb).s })?.rgb else { return .placeholder }
+
+        let mutedSource = reps.filter { let h = hsl($0.rgb); return h.l >= 0.2 && h.l <= 0.8 }
+        guard let muted = (mutedSource.isEmpty ? reps : mutedSource)
+            .min(by: { hsl($0.rgb).s < hsl($1.rgb).s })?.rgb else { return .placeholder }
+
+        guard let dark  = reps.min(by: { lum($0.rgb) < lum($1.rgb) })?.rgb,
+              let light = reps.max(by: { lum($0.rgb) < lum($1.rgb) })?.rgb else {
+            return .placeholder
         }
-        let muted = (mutedCandidates.isEmpty ? reps : mutedCandidates)
-            .min { hsl($0.rgb).s < hsl($1.rgb).s }!.rgb
-
-        let dark  = reps.min { lum($0.rgb) < lum($1.rgb) }!.rgb
-        let light = reps.max { lum($0.rgb) < lum($1.rgb) }!.rgb
 
         let fgRGB  = ContrastEngine.foreground(against: dominant)
         let sfgRGB = ContrastEngine.secondaryForeground(against: dominant)
