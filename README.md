@@ -10,7 +10,7 @@ Add the package in Xcode via **File › Add Package Dependencies** and enter the
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/your-org/PaletteKit", from: "1.0.0")
+    .package(url: "https://github.com/stevenation/PaletteKit", from: "1.0.0")
 ],
 targets: [
     .target(name: "YourTarget", dependencies: ["PalleteKit"])
