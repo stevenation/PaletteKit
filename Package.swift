@@ -1,24 +1,21 @@
-// swift-tools-version: 6.3
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
-    name: "PalleteKit",
+    name: "PaletteKit",
+    platforms: [
+        .iOS(.v17),
+        .macOS(.v14),
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "PalleteKit",
-            targets: ["PalleteKit"]
-        ),
+        .library(name: "PaletteKit", targets: ["PaletteKit"]),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "PalleteKit"
+        .target(name: "PaletteKit"),
+        .testTarget(
+            name: "PaletteKitTests",
+            dependencies: ["PaletteKit"]
         ),
-
     ],
     swiftLanguageModes: [.v6]
 )
