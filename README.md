@@ -22,9 +22,6 @@ targets: [
     .target(name: "YourTarget", dependencies: ["PalleteKit"])
 ]
 ```
-
-Requires **iOS 17+** or **macOS 14+**.
-
 ---
 
 ## 🌄 Example
