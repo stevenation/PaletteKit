@@ -24,7 +24,7 @@ Requires **iOS 17+** or **macOS 14+**.
 ## 🌄 Example
 
 <p align="center">
-    <img src="https://github.com/stevenation/PaletteKit/blob/main/Assets/example.gif" style="display: block; margin: auto;"/>
+    <img src="https://github.com/stevenation/PaletteKit/blob/main/Assets/example.gif" style="display: block; margin: auto; height="400""/>
 </p>
 
 ## Quick start
