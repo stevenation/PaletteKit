@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="https://img.shields.io/badge/MacOS-14+-blue.svg" alt="MacOS">
+  <img src="https://img.shields.io/badge/iOS-17+-green.svg" alt="iOS">
+  <img src="https://img.shields.io/badge/Swift-6.0-orange.svg" alt="Swift">
+</p>
+
 # PaletteKit
 
 A Swift Package Manager library that extracts a semantic color palette from any image and propagates it through a SwiftUI view hierarchy as an environment value — zero prop drilling, guaranteed WCAG AA contrast on all color pairs.
